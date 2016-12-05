@@ -1,0 +1,18 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<cache name="brandsByCategory" maxEntriesLocalHeap="100"
+		timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	<cache name="productCategories" maxEntriesLocalHeap="100"
+		timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	<cache name="featuredProducts" maxEntriesLocalHeap="100"
+		timeToLiveSeconds="10" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	<cache name="brandsByCategory" maxEntriesLocalHeap="100"
+		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+	</cache>
+	<cache name="products" maxEntriesLocalHeap="1000"
+		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+	</cache>
+</ehcache>
