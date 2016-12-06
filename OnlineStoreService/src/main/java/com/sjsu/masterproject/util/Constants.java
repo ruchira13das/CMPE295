@@ -10,8 +10,8 @@ public class Constants {
 	public static final String CATEGORY__CONFIG_TOYSANDGAMES = "app.config.productCategory.toysandgames";
 
 	public static final String RECOMMENDATION_PREFERENCE_VIEW = "1.0";
-	public static final String RECOMMENDATION_PREFERENCE_CART = "2.0";
-	public static final String RECOMMENDATION_PREFERENCE_WISHLIST = "3.0";
+	public static final String RECOMMENDATION_PREFERENCE_WISHLIST = "2.0";
+	public static final String RECOMMENDATION_PREFERENCE_CART = "3.0";
 	public static final String RECOMMENDATION_PREFERENCE_CHECKOUT = "4.0";
 	public static final String RECOMMENDATION_PREFERENCE_PURCHASE = "5.0";
 }
