@@ -119,4 +119,54 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findOne(productId);
 	}
 
+	@Override
+	@Cacheable("brandsForFeaturedProductsByCategory")
+	public List<String> getBrandsForFeaturedProductsByCategory(String category) throws Exception {
+		log.info("getBrandsForFeaturedProductsByCategory: {}", category);
+
+		List<Product> products = productRepository.findByFeaturedAndCategory("true", category);
+
+		// Get unique brands
+		Set<String> brands = new HashSet<>();
+		for (Product product : products) {
+			String brand = product.getBrand();
+			if (!StringUtils.isEmpty(brand)) {
+				brands.add(brand);
+			}
+		}
+
+		log.info("Featured category: {} has {} different brands.", category, brands.size());
+		return new ArrayList<>(brands);
+	}
+
+	@Override
+	@Cacheable("brandsForFeaturedProducts")
+	public List<String> getBrandsForFeaturedProducts() throws Exception {
+		log.info("getBrandsForFeaturedProducts...");
+
+		List<Product> products = productRepository.findByFeatured("true");
+
+		// Get unique brands
+		Set<String> brands = new HashSet<>();
+		for (Product product : products) {
+			String brand = product.getBrand();
+			if (!StringUtils.isEmpty(brand)) {
+				brands.add(brand);
+			}
+		}
+
+		log.info("Featured products brands: {}.", brands);
+		return new ArrayList<>(brands);
+	}
+
+	@Override
+	public List<Product> getFeaturedProductsByBrand(String brand) throws Exception {
+		log.info("getFeaturedProductsByBrand");
+
+		List<Product> featured = productRepository.findByFeaturedAndBrand("true", brand);
+
+		log.info("getFeaturedProductsByBrand: {}", featured);
+		return featured;
+	}
+
 }

@@ -207,6 +207,21 @@ public class Util {
 		SignUpForm signUpForm = new SignUpForm();
 		signUpForm.setForwardAction(forwardAction);
 
+		return setModelForLoginPage(model, signInForm, signUpForm, forwardAction, env);
+	}
+	
+	public static Model setModelForSignUpAction(Model model, String forwardAction, SignUpForm signUpForm,
+			String message, Environment env) throws Exception {
+
+		signUpForm.setMessage(message);
+
+		SignInForm signInForm = new SignInForm();
+		signInForm.setForwardAction(forwardAction);
+
+		return setModelForLoginPage(model, signInForm, signUpForm, forwardAction, env);
+	}
+	
+	private static Model setModelForLoginPage(Model model, SignInForm signInForm, SignUpForm signUpForm, String forwardAction, Environment env) throws Exception {
 		model.addAttribute("signInForm", signInForm);
 		model.addAttribute("signUpForm", signUpForm);
 		model.addAttribute("forward", forwardAction);

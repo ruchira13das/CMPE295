@@ -1,6 +1,7 @@
 package com.sjsu.masterproject.form;
 
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,12 +23,10 @@ public class SignUpForm {
 
 	private String forwardAction;
 
-	public SignUpForm() {
-		super();
-	}
+	private String message;
 
 	public SignUpForm(String customerId, String password, String firstName, String lastName, List<String> preferences,
-			String forwardAction) {
+			String forwardAction, String message) {
 		super();
 		this.customerId = customerId;
 		this.password = password;
@@ -35,12 +34,29 @@ public class SignUpForm {
 		this.lastName = lastName;
 		this.preferences = preferences;
 		this.forwardAction = forwardAction;
+		this.message = message;
+	}
+
+	public SignUpForm() {
+		super();
 	}
 
 	@Override
 	public String toString() {
 		return "SignUpForm [customerId=" + customerId + ", password=" + password + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", preferences=" + preferences + ", forwardAction=" + forwardAction + "]";
+				+ ", lastName=" + lastName + ", preferences=" + preferences + ", forwardAction=" + forwardAction
+				+ ", message=" + message + "]";
+	}
+
+	public boolean isValid() {
+		boolean isValid = false;
+
+		if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName) && StringUtils.isNotBlank(password)
+				&& StringUtils.isNotBlank(customerId)) {
+			isValid = true;
+		}
+
+		return isValid;
 	}
 
 	public String getCustomerId() {
@@ -89,6 +105,14 @@ public class SignUpForm {
 
 	public void setForwardAction(String forwardAction) {
 		this.forwardAction = forwardAction;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }

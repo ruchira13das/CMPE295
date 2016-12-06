@@ -42,16 +42,34 @@ public class StoreController {
 		return productService.getFeaturedProducts();
 	}
 
-	@RequestMapping(value = "/store/featured/{category}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/store/featured/category/{category}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public List<Product> getFeaturedProductsByCategorys(@PathVariable("category") String category) throws Exception {
+	public List<Product> getFeaturedProductsByCategory(@PathVariable("category") String category) throws Exception {
 		return productService.getFeaturedProductsByCategory(category);
+	}
+	
+	@RequestMapping(value = "/store/featured/brands/{brand}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public List<Product> getFeaturedProductsByBrand(@PathVariable("brand") String brand) throws Exception {
+		return productService.getFeaturedProductsByBrand(brand);
 	}
 
 	@RequestMapping(value = "/store/brands/{category}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public List<String> getBrands(@PathVariable("category") String category) throws Exception {
 		return productService.getBrandsForCategory(category);
+	}
+	
+	@RequestMapping(value = "/store/brands/featured/{category}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public List<String> getBrandsForFeaturedProductsByCategory(@PathVariable("category") String category) throws Exception {
+		return productService.getBrandsForFeaturedProductsByCategory(category);
+	}
+	
+	@RequestMapping(value = "/store/brands/featured", method = RequestMethod.GET, produces = "application/json")
+	@ResponseStatus(HttpStatus.OK)
+	public List<String> getBrandsForFeaturedProducts() throws Exception {
+		return productService.getBrandsForFeaturedProducts();
 	}
 
 	@RequestMapping(value = "/store/product/{product_id}/customer/{customer_id}", method = RequestMethod.GET, produces = "application/json")

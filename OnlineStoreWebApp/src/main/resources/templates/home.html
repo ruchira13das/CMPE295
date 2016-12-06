@@ -202,7 +202,7 @@
 
 							<div class="brands-name">
 								<ul class="nav nav-pills nav-stacked" th:each="brand:${brands}">
-									<li><a th:text="${brand}" th:href="@{|/brand/${brand}|}"></a></li>
+									<li><a th:text="${brand}" href="#" th:onclick="'javascript:filterByBrand(\'' + ${brand} + '\');'"></a></li>
 								</ul>
 							</div>
 						</div>
@@ -267,6 +267,14 @@
 			$(".se-pre-con").fadeIn("slow");
 			$('#content-import-featured').load(encodeURI('/category/' + category));
 			$('#content-import-recommendations').load(encodeURI('/recommendations/' + category));
+			$(".se-pre-con").fadeOut("slow");
+		}
+		
+		function filterByBrand(brand) {
+			$('#content-import-featured').empty();
+			$(".se-pre-con").fadeIn("slow");
+			$('#content-import-featured').load(encodeURI('/brand/' + brand));
+			$('#content-import-recommendations').load(encodeURI('/recommendations/all'));
 			$(".se-pre-con").fadeOut("slow");
 		}
 		

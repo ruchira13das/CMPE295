@@ -73,13 +73,7 @@ public class OnlineStoreWebAppController {
 		model.addAttribute("categories", categories);
 
 		// Get brands
-		List<String> brands = new ArrayList<>();
-		for (String category : categories) {
-			List<String> brandsForCategory = productServiceClient.getBrands(category);
-			if (brandsForCategory != null && brandsForCategory.size() > 3) {
-				brands.addAll(productServiceClient.getBrands(category).subList(0, 3));
-			}
-		}
+		List<String> brands = productServiceClient.getBrandsForFeaturedProducts();
 
 		// Add cookie to response - max-age: 30 days
 		Util.addCustomerIdCookieToResponse(response, request);
@@ -349,6 +343,20 @@ public class OnlineStoreWebAppController {
 
 		return "featured";
 	}
+	
+	@GetMapping(value = "/brand/{brand}")
+	public String featuredCatalogByBrand(@PathVariable("brand") String brand, Model model) throws Exception {
+
+		log.info("featuredCatalogByBrand....{}", brand);
+		
+		// Get featured products
+		model.addAttribute("featuredProducts", productServiceClient.getFeaturedProductsByBrand(brand));
+
+		// Set sign-in status
+		Util.setSignInStatus(model, request);
+
+		return "featured";
+	}
 
 	@GetMapping(value = "/{brand}")
 	public String catalogByBrand(Model model) throws Exception {
@@ -473,6 +481,83 @@ public class OnlineStoreWebAppController {
 			return "login";
 		}
 	}
+	
+	@PostMapping(value = "/signup")
+	public String signUpAndForward(@Valid SignUpForm signUpForm, BindingResult bindingResult, Model model)
+			throws Exception {
+		
+		log.info("signUpAndForward: signUpForm: {}", signUpForm);
+
+		String customerId = signUpForm.getCustomerId();
+		String forwardAction = signUpForm.getForwardAction();
+		if (!signUpForm.isValid()) {
+			model = Util.setModelForSignUpAction(model, forwardAction, signUpForm, "Invalid user input!", env);
+
+			// Go back to login with error message
+			return "login";
+		}
+		
+		// Check if this userid is already taken
+		if(customerServiceClient.getCustomer(customerId) != null) {
+			model = Util.setModelForSignUpAction(model, forwardAction, signUpForm, "User Id: " + customerId + " is taken! Try a different one.", env);
+
+			// Go back to login with error message
+			return "login";
+		}
+
+		try {
+			// Get the anonymous cart to merge
+			Cart anonymousCart = checkoutServiceClient.getCartForCustomer(Util.getCustomerFromRequest(request));
+
+			Customer customer = new Customer();
+			customer.setId(customerId);
+			customer.setPassword(signUpForm.getPassword());
+			customer.setFirstName(signUpForm.getFirstName());
+			customer.setLastName(signUpForm.getLastName());
+			customer.setPreferences(signUpForm.getPreferences());
+			
+			Customer newCustomer = customerServiceClient.signUp(customer);
+
+			if (newCustomer != null) {
+				// Add customerId cookie to response - max-age: 30 days
+				CookieUtil.create(response, "eshopper_customer", newCustomer.getId(), 30 * 24 * 3600);
+
+				// Add isLoggedIn cookie to response - max-age: session
+				CookieUtil.create(response, "eshopper_loggedin", newCustomer.getId(), -1);
+
+				// Set sign-in status
+				Util.setSignInStatus(model, request);
+
+				// Merge carts
+				if (anonymousCart != null) {
+					checkoutServiceClient.mergeCarts(anonymousCart, newCustomer.getId());
+				}
+
+				String pageForward = Util.getForwardPage(forwardAction);
+
+				String redirectUrl = request.getScheme() + "://" + request.getServerName() + ":"
+						+ request.getServerPort() + "/" + pageForward;
+				log.info("redirectUrl: {}", redirectUrl);
+
+				return "redirect:" + redirectUrl;
+			} else {
+				// SignUp failed
+				model = Util.setModelForSignUpAction(model, "login", signUpForm, "Error! Could not sign-up user.", env);
+
+				// Go back to login with error message
+				return "login";
+			}
+		} catch (Exception e) {
+			// SignIn Error
+			log.error("Error in sign-up.", e);
+
+			// SignUp error
+			model = Util.setModelForSignUpAction(model, "login", signUpForm, "Sign-up error!", env);
+
+			// Go back to login with error message
+			return "login";
+		}
+	}
 
 	@GetMapping(value = "/signout")
 	public String signOut(Model model) throws Exception {
@@ -483,6 +568,14 @@ public class OnlineStoreWebAppController {
 			CookieUtil.clear(response, "eshopper_loggedin");
 			log.info("login cookie is dropped!");
 		}
+		
+		// Get categories
+		List<String> categories = productServiceClient.getCategories();
+		model.addAttribute("categories", categories);
+
+		// Get brands
+		List<String> brands = productServiceClient.getBrandsForFeaturedProducts();
+		model.addAttribute("brands", brands);
 
 		return "home";
 	}

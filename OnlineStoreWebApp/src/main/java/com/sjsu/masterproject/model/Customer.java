@@ -3,6 +3,8 @@ package com.sjsu.masterproject.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Customer implements Serializable {
 
 	/**
@@ -41,6 +43,17 @@ public class Customer implements Serializable {
 				+ firstName
 				+ ", lastName=" + lastName + ", preferences=" + preferences + ", productsPurchased=" + productsPurchased
 				+ "]";
+	}
+	
+	public boolean isValidNewCustomer() {
+		boolean isValid = false;
+
+		if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName) && StringUtils.isNotBlank(password)
+				&& StringUtils.isNotBlank(id)) {
+			isValid = true;
+		}
+
+		return isValid;
 	}
 
 	public String getId() {

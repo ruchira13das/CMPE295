@@ -24,9 +24,12 @@ public class ProductServiceClient extends OnlineStoreServiceClient {
 
 	private static final String GET_CATEGORIES_URI = "/store/categories";
 	private static final String GET_FEATURED_PRODUCTS_URI = "/store/featured";
+	private static final String GET_FEATURED_PRODUCTS_BY_CATEGORY_URI = "/category/";
+	private static final String GET_FEATURED_PRODUCTS_BY_BRAND_URI = "/brands/";
 	private static final String GET_PRODUCT_DETAILS_BASE_URI = "/store/product/";
 	private static final String GET_PRODUCT_DETAILS_CUSTOMER_URI = "/customer/";
 	private static final String GET_BRANDS_BY_CATEGORY_URI = "/store/brands";
+	private static final String GET_BRANDS_FOR_FEATURED_URI = "/store/brands/featured";
 
 	@Cacheable("categories")
 	public List<String> getCategories() {
@@ -52,6 +55,29 @@ public class ProductServiceClient extends OnlineStoreServiceClient {
 		return categories;
 	}
 
+	@Cacheable("brandsForFeaturedProducts")
+	public List<String> getBrandsForFeaturedProducts() {
+		log.info("getBrandsForFeaturedProducts");
+
+		List<String> brands = new ArrayList<>();
+		String serviceEndPoint = getBaseServiceUrl(env) + GET_BRANDS_FOR_FEATURED_URI;
+
+		log.info("getBrandsForFeaturedProducts: Service End point: {}", serviceEndPoint);
+
+		try {
+			ResponseEntity<List<String>> response = getRestTemplate().exchange(serviceEndPoint, HttpMethod.GET, null,
+					new ParameterizedTypeReference<List<String>>() {
+			});
+			brands = response.getBody();
+		} catch (Exception e) {
+			log.error("Error while getting the brands for the featured products!", e);
+		}
+
+		log.info("Brands for featured products: {}", brands);
+
+		return brands;
+	}
+	
 	@Cacheable("brands")
 	public List<String> getBrands(String category) {
 		log.info("getBrands for category: {}", category);
@@ -124,7 +150,7 @@ public class ProductServiceClient extends OnlineStoreServiceClient {
 		log.info("getFeaturedProductsByCategory for: {}", category);
 
 		List<Product> featuredProducts = new ArrayList<>();
-		String serviceEndPoint = getBaseServiceUrl(env) + GET_FEATURED_PRODUCTS_URI + "/" + category;
+		String serviceEndPoint = getBaseServiceUrl(env) + GET_FEATURED_PRODUCTS_URI + GET_FEATURED_PRODUCTS_BY_CATEGORY_URI + category;
 
 		log.info("getFeaturedProductsByCategory: Service End point: {}", serviceEndPoint);
 
@@ -135,6 +161,28 @@ public class ProductServiceClient extends OnlineStoreServiceClient {
 			featuredProducts = response.getBody();
 		} catch (Exception e) {
 			log.error("Error while getting the store's featured products for: {}!", category, e);
+		}
+
+		log.info("Featured products: {}", featuredProducts);
+
+		return featuredProducts;
+	}
+	
+	public List<Product> getFeaturedProductsByBrand(String brand) {
+		log.info("getFeaturedProductsByBrand for: {}", brand);
+
+		List<Product> featuredProducts = new ArrayList<>();
+		String serviceEndPoint = getBaseServiceUrl(env) + GET_FEATURED_PRODUCTS_URI + GET_FEATURED_PRODUCTS_BY_BRAND_URI+ brand;
+
+		log.info("getFeaturedProductsByBrand: Service End point: {}", serviceEndPoint);
+
+		try {
+			ResponseEntity<List<Product>> response = getRestTemplate().exchange(serviceEndPoint, HttpMethod.GET, null,
+					new ParameterizedTypeReference<List<Product>>() {
+			});
+			featuredProducts = response.getBody();
+		} catch (Exception e) {
+			log.error("Error while getting the store's featured products for: {}!", brand, e);
 		}
 
 		log.info("Featured products: {}", featuredProducts);

@@ -14,6 +14,8 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 	public List<Product> findByFeatured(String featuredFlag);
 
 	public List<Product> findByFeaturedAndCategory(String featuredFlag, String category);
+	
+	public List<Product> findByFeaturedAndBrand(String featuredFlag, String brand);
 
 	public List<Product> findByIdAsLongStringIn(@Param("idAsLongString") List<String> ids);
 }

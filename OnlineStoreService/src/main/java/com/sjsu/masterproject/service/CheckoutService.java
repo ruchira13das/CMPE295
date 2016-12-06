@@ -21,6 +21,6 @@ public interface CheckoutService {
 
 	public boolean purchase(Cart cart) throws Exception;
 
-	public Cart mergeCarts(Cart cart, String customerId) throws Exception;
+	public Cart mergeCarts(Cart anonymousCart, String customerId) throws Exception;
 
 }

@@ -1,7 +1,9 @@
 package com.sjsu.masterproject.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -329,7 +331,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 	}
 
 	@Override
-	public Cart mergeCarts(Cart cart, String customerId) throws Exception {
+	public Cart mergeCarts(Cart anonymousCart, String customerId) throws Exception {
 		log.info("mergeCarts: {}", customerId);
 
 		// Get the customer
@@ -342,29 +344,31 @@ public class CheckoutServiceImpl implements CheckoutService {
 		Cart mergedCart = new Cart();
 
 		if (masterCart == null) {
-			log.info("No cart found in DB for customer: {}. Assign the other cart to the customer.", customerId);
+			log.info("No cart found in DB for customer: {}. Assign the anonymous cart to the customer.", customerId);
 			mergedCart.setCustomer(customer);
-			mergedCart.setProductsInCart(cart.getProductsInCart());
+			mergedCart.setProductsInCart(anonymousCart.getProductsInCart());
 			mergedCart.calculateTotal();
 		} else {
 			// Merge cart to masterCart
 			mergedCart.setCustomer(customer);
-			List<ProductContext> mergedProductContexts = new ArrayList<>();
-
-			for (ProductContext productContext : cart.getProductsInCart()) {
-				ProductContext matchingMasterProductContext = findMatchingProductContextInCart(masterCart,
-						productContext.getProduct());
-
-				if (matchingMasterProductContext != null) {
-					// Merge the two productContexts
-					ProductContext mergedProductContext = mergeProductContexts(matchingMasterProductContext,
-							productContext);
-					mergedProductContexts.add(mergedProductContext);
-				} else {
-					// No match found. Add to the master project
-					mergedProductContexts.add(productContext);
-				}
-			}
+//			List<ProductContext> mergedProductContexts = new ArrayList<>();
+//
+//			for (ProductContext productContext : anonymousCart.getProductsInCart()) {
+//				ProductContext matchingMasterProductContext = findMatchingProductContextInCart(masterCart,
+//						productContext.getProduct());
+//
+//				if (matchingMasterProductContext != null) {
+//					// Merge the two productContexts
+//					ProductContext mergedProductContext = mergeProductContexts(matchingMasterProductContext,
+//							productContext);
+//					mergedProductContexts.add(mergedProductContext);
+//				} else {
+//					// No match found. Add to the master project
+//					mergedProductContexts.add(productContext);
+//				}
+//			}
+			
+			List<ProductContext> mergedProductContexts = mergeProductsListInCart(masterCart.getProductsInCart(), anonymousCart.getProductsInCart());
 
 			mergedCart.setProductsInCart(mergedProductContexts);
 			mergedCart.calculateTotal();
@@ -374,38 +378,68 @@ public class CheckoutServiceImpl implements CheckoutService {
 		mergedCart = cartRepository.save(mergedCart);
 		log.info("Merged cart add to DB...");
 
-		// Drop the cart and master cart
-		cartRepository.delete(cart);
+		// Drop the anonymous cart and master cart
+		cartRepository.delete(anonymousCart);
 		if (masterCart != null) {
-			cartRepository.delete(masterCart);
+			cartRepository.delete(masterCart.getId());
 		}
 		log.info("Deleted the participating carts!");
 
 		return mergedCart;
 	}
-
-	private ProductContext mergeProductContexts(ProductContext matchingMasterProductContext,
-			ProductContext productContext) {
-		log.info("mergeProductContexts");
-		ProductContext mergedContext = new ProductContext();
-		mergedContext.setProduct(matchingMasterProductContext.getProduct());
-		mergedContext.setQuantity(matchingMasterProductContext.getQuantity() + productContext.getQuantity());
-
-		return mergedContext;
-	}
-
-	private ProductContext findMatchingProductContextInCart(Cart cart, Product product) throws Exception {
-		ProductContext match = null;
-
-		for (ProductContext productContext : cart.getProductsInCart()) {
-			if (product.getId().equals(productContext.getProduct().getId())) {
-				// Match Found
-				match = productContext;
-				break;
+	
+	
+	private List<ProductContext> mergeProductsListInCart(List<ProductContext> productsInCart1, List<ProductContext> productsInCart2) {
+		log.info("mergeProductsListInCart");
+		
+		Map<String, ProductContext> productsMap = new HashMap<>();
+		
+		// Iterate the first list and add it to map
+		for (ProductContext productContext : productsInCart1) {
+			productsMap.put(productContext.getProduct().getId(), productContext);
+		}
+		
+		// Iterate through the second list to add/merge
+		for (ProductContext productContext : productsInCart2) {
+			String productId = productContext.getProduct().getId();
+			
+			if (productsMap.containsKey(productId)) {
+				// Merge
+				ProductContext productContextInMap = productsMap.get(productId);
+				productContextInMap.setQuantity(productContextInMap.getQuantity() + productContext.getQuantity());
+			} else {
+				// Add
+				productsMap.put(productId, productContext);
 			}
 		}
-
-		return match;
+		
+		// productsMap now contains the merged list of productContexts
+		return new ArrayList<ProductContext>(productsMap.values());
+		
 	}
+
+//	private ProductContext mergeProductContexts(ProductContext matchingMasterProductContext,
+//			ProductContext productContext) {
+//		log.info("mergeProductContexts");
+//		ProductContext mergedContext = new ProductContext();
+//		mergedContext.setProduct(matchingMasterProductContext.getProduct());
+//		mergedContext.setQuantity(matchingMasterProductContext.getQuantity() + productContext.getQuantity());
+//
+//		return mergedContext;
+//	}
+//
+//	private ProductContext findMatchingProductContextInCart(Cart cart, Product product) throws Exception {
+//		ProductContext match = null;
+//
+//		for (ProductContext productContext : cart.getProductsInCart()) {
+//			if (product.getId().equals(productContext.getProduct().getId())) {
+//				// Match Found
+//				match = productContext;
+//				break;
+//			}
+//		}
+//
+//		return match;
+//	}
 
 }

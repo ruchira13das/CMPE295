@@ -68,9 +68,9 @@ public class CheckoutController {
 
 	@RequestMapping(value = "/checkout/cart/merge/{customer_id}/", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
-	public Cart mergeCarts(@RequestBody Cart cart, @PathVariable("customer_id") String customerId) throws Exception {
+	public Cart mergeCarts(@RequestBody Cart anonymousCart, @PathVariable("customer_id") String customerId) throws Exception {
 		log.info("Get cart for customer: {}", customerId);
-		return checkoutService.mergeCarts(cart, customerId);
+		return checkoutService.mergeCarts(anonymousCart, customerId);
 	}
 
 	@RequestMapping(value = "/checkout/purchase", method = RequestMethod.POST, produces = "application/json")
