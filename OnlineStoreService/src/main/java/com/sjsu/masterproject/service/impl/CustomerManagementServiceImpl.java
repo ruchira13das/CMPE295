@@ -57,6 +57,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 		customerInDb.setFirstName(customer.getFirstName());
 		customerInDb.setLastName(customer.getLastName());
 		customerInDb.setPreferences(customer.getPreferences());
+		customerInDb.setProductsPurchased(customer.getProductsPurchased());
 		
 		// Update the password only if it has changed
 		if (!StringUtils.isEmpty(customer.getPassword())) {

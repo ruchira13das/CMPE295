@@ -33,7 +33,7 @@ public class RecommendationsServiceClient extends OnlineStoreServiceClient {
 		log.info("getRecommendationsForCustomer for: {}", customerId);
 
 		List<Product> recommendations = null;
-		String serviceEndPoint = getBaseServiceUrl(env) + GET_RECOMMENDATIONS_URI + customerId;
+		String serviceEndPoint = getBaseServiceUrl(env) + GET_RECOMMENDATIONS_URI + customerId + "/";
 
 		log.info("getCategories: Service End point: {}", serviceEndPoint);
 

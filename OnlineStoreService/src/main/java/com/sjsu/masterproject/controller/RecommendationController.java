@@ -31,7 +31,7 @@ public class RecommendationController {
 		return recommendationsService.getRecommendations(customerId, category);
 	}
 
-	@RequestMapping(value = "/recommendation/customer/{customer_id}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/recommendation/customer/{customer_id}/", method = RequestMethod.GET, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Product> getRecommendationsForUser(@PathVariable("customer_id") String customerId) throws Exception {
 		log.info("getRecommendationsForUser: customer: {}", customerId);
