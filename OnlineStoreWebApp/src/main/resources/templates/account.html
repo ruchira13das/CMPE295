@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>Account | E-Shopper</title>
+<link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/prettyPhoto.css" th:href="@{/css/prettyPhoto.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/price-range.css" th:href="@{/css/price-range.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/main.css"  th:href="@{/css/main.css}" rel="stylesheet" media="screen"/>
+<link href="../static/css/responsive.css" th:href="@{/css/responsive.css}" rel="stylesheet" media="screen"/>
+<!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+<link rel="shortcut icon"
+	href="../static/images/ico/favicon.ico" th:href="@{/images/ico/favicon.ico}"/>
+<link rel="apple-touch-icon-precomposed" sizes="144x144"
+	href="../static/images/ico/apple-touch-icon-144-precomposed.png" th:href="@{/images/ico/apple-touch-icon-144-precomposed.png}"/>
+<link rel="apple-touch-icon-precomposed" sizes="114x114"
+	href="../static/images/ico/apple-touch-icon-114-precomposed.png" th:href="@{/images/ico/apple-touch-icon-114-precomposed.png}"/>
+<link rel="apple-touch-icon-precomposed" sizes="72x72"
+	href="../static/images/ico/apple-touch-icon-72-precomposed.png" th:href="@{/images/ico/apple-touch-icon-72-precomposed.png}"/>
+<link rel="apple-touch-icon-precomposed"
+	href="../static/images/ico/apple-touch-icon-72-precomposed.png" th:href="@{/images/ico/apple-touch-icon-72-precomposed.png}"/>
+
+</head>
+<!--/head-->
+
+<body>
+	<header id="header">
+		<!--header-->
+
+		<div class="header-middle">
+			<!--header-middle-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="logo pull-left">
+							<a href="/"><img src="/images/home/logo.png" alt="" /></a>
+						</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="shop-menu pull-right">
+							<ul class="nav navbar-nav">
+								<li><a href="/account.html"><i class="fa fa-user"></i> Account</a></li>
+								<li><a href="/wishlist.html"><i class="fa fa-star"></i> Wishlist</a></li>
+								<li><a href="/checkout.html"><i class="fa fa-crosshairs"></i>
+										Checkout</a></li>
+								<li><a href="/cart.html"><i class="fa fa-shopping-cart"></i>
+										Cart</a></li>
+								<li th:if="${signedIn}"><a href="/signout.html"><i class="fa fa-lock" th:text="'Logout, ' + ${signedInUser}"></i></a></li>
+								<li th:unless="${signedIn}"><a href="/login.html"><i class="fa fa-lock"></i>
+										Login</a></li>		
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/header-middle-->
+
+		<div class="header-bottom">
+			<!--header-bottom-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-9">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle"
+								data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span> <span
+									class="icon-bar"></span> <span class="icon-bar"></span> <span
+									class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="mainmenu pull-left">
+							<ul class="nav navbar-nav collapse navbar-collapse">
+								<li><a href="/" class="active">Home</a></li>
+								<li class="dropdown"><a href="#">Shop<i
+										class="fa fa-angle-down"></i></a>
+									<ul role="menu" class="sub-menu">
+										<li><a href="/checkout.html">Checkout</a></li>
+										<li><a href="/cart.html">Cart</a></li>
+										<li th:if="${signedIn}"><a href="/signout.html" th:text="'Logout, ' + ${signedInUser}"></a></li>
+										<li th:unless="${signedIn}"><a href="/login.html">Login</a></li>
+									</ul></li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="search_box pull-right">
+							<input type="text" placeholder="Search" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/header-bottom-->
+	</header>
+	<!--/header-->
+	
+	<section id="form"><!--form-->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4">
+					<div class="signup-form"><!--sign up form-->
+						<h2>Manage your Account!</h2>
+						<form action="/customer/save" th:action="@{/customer/save}" th:object="${customerForm}" method="post">
+							<input type="text" placeholder="First Name" th:field="*{firstName}" th:text="${customerForm.firstName}"/>
+							<input type="text" placeholder="Last Name" th:field="*{lastName}" th:text="${customerForm.lastName}"/>
+							<input type="text" placeholder="Id" th:field="*{customerId}" th:text="${customerForm.customerId}"/>
+							<input type="password" placeholder="Password" th:field="*{password}" th:text="${customerForm.password}"/>
+							
+							<span class="login-error" th:text="${customerForm.message}"/>
+							
+							<ul class="checkbox-grid">
+								<th:block th:each="preference:${preferences}">
+								<li>
+								<input type="checkbox" class="checkbox" th:field="*{preferences}" th:value="|${customerForm.preference}|" th:text="${preference}"/> 
+								</li>
+								</th:block>
+								<li>
+								<button type="submit" class="btn btn-default">Save</button>
+								</li>
+							</ul>
+							
+							<input type="hidden" th:field="*{forwardAction}" th:value="${forwardAction}"/>
+						</form>
+					</div><!--/sign up form-->
+				</div>
+			</div>
+		</div>
+	</section><!--/form-->
+	
+	<footer id="footer">
+		<!--Footer-->
+		<div class="footer-bottom">
+			<div class="container">
+				<div class="row">
+					<p class="pull-left">Copyright © 2016 E-SHOPPER Inc. All rights
+						reserved.</p>
+					<p class="pull-right">
+						Designed by <span><a target="_blank"
+							href="http://www.themeum.com">Themeum</a></span>
+					</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!--/Footer-->	
+	
+    <script src="/js/jquery.js"></script>
+	<script src="/js/price-range.js"></script>
+    <script src="/js/jquery.scrollUp.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.prettyPhoto.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
