@@ -190,6 +190,9 @@ public class Util {
 			case "checkout":
 				forwardPage = "checkout";
 				break;
+			case "account":
+				forwardPage = "account";
+				break;	
 			default:
 				forwardPage = "home";
 				break;

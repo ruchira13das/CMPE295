@@ -35,7 +35,7 @@ public class CustomerController {
 		return customerService.getCustomer(customerId);
 	}
 
-	@RequestMapping(value = "/customer/update", method = RequestMethod.PUT, produces = "application/json")
+	@RequestMapping(value = "/customer/update", method = RequestMethod.POST, produces = "application/json")
 	@ResponseStatus(HttpStatus.OK)
 	public Customer updateCustomer(@RequestBody Customer customer) throws Exception {
 		log.info("updateCustomer. Customer: {}", customer.toString());

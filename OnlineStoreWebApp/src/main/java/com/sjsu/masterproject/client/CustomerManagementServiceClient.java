@@ -22,6 +22,7 @@ public class CustomerManagementServiceClient extends OnlineStoreServiceClient {
 	private static final String SIGN_IN_URI = "/customer/login";
 	private static final String SIGN_UP_URI = "/customer/signup";
 	private static final String GET_CUSTOMER_URI = "/customer/";
+	private static final String UPDATE_CUSTOMER_URI = "/customer/update";
 
 	public Boolean signIn(Customer customer) throws Exception {
 		log.info("signIn {}", customer);
@@ -93,5 +94,28 @@ public class CustomerManagementServiceClient extends OnlineStoreServiceClient {
 		log.info("Customer found: {}", customer);
 
 		return customer;
+	}
+	
+	public Customer updateCustomer(Customer customer) throws Exception {
+		log.info("updateCustomer {}", customer);
+
+		if (customer == null || StringUtils.isEmpty(customer.getId())) {
+			throw new Exception("updateCustomer: Customer info is invalid!");
+		}
+
+		Customer updatedCustomer = new Customer();
+		
+		String serviceEndPoint = getBaseServiceUrl(env) + UPDATE_CUSTOMER_URI;
+		log.info("updateCustomer: Service End point: {}", serviceEndPoint);
+
+		try {
+			updatedCustomer = getRestTemplate().postForObject(serviceEndPoint, customer, Customer.class);
+		} catch (Exception e) {
+			log.error("Error while updating customer: {}!", customer, e);
+		}
+
+		log.info("Successfully updated customer:: {}", updatedCustomer);
+
+		return updatedCustomer;
 	}
 }

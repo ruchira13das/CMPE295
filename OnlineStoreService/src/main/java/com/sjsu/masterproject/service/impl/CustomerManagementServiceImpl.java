@@ -45,12 +45,27 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 		if (customer == null) {
 			throw new ServiceException("Invalid request. User is not provided/invalid");
 		}
-
-		if (!repository.exists(customer.getId())) {
+		
+		// Get the DB snapshot of the customer
+		Customer customerInDb = repository.findOne(customer.getId());
+		
+		if (customerInDb == null) {
 			throw new RecordNotFoundException("Cannot update user: " + customer.getId() + ". Record not found in DB.");
 		}
+		
+		// Merge to customerInDb
+		customerInDb.setFirstName(customer.getFirstName());
+		customerInDb.setLastName(customer.getLastName());
+		customerInDb.setPreferences(customer.getPreferences());
+		
+		// Update the password only if it has changed
+		if (!StringUtils.isEmpty(customer.getPassword())) {
+			customerInDb.setPassword(customer.getPassword());
+		}
 
-		Customer updatedCustomer = repository.save(customer);
+		Customer updatedCustomer = repository.save(customerInDb);
+		
+		// Obfuscated in response
 		updatedCustomer.setPassword("xxxxxx");
 
 		return updatedCustomer;

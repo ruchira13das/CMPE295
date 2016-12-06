@@ -572,6 +572,10 @@ ul.sub-menu {
   padding-bottom: 45px;
 }
 
+#profile {
+  padding-bottom: 185px;
+}
+
 .carousel-indicators li {
   background: #C4C4BE;
 }
@@ -1440,6 +1444,13 @@ h2.title {
 
 .signup-form {
 
+}
+
+.account-form {
+  display: block;
+  margin-bottom: 185px;
+  margin-top: 100px;
+  overflow: hidden;
 }
 
 .login-form h2, .signup-form h2 {

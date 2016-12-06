@@ -26,6 +26,7 @@ import com.sjsu.masterproject.client.CustomerManagementServiceClient;
 import com.sjsu.masterproject.client.ProductServiceClient;
 import com.sjsu.masterproject.client.RecommendationsServiceClient;
 import com.sjsu.masterproject.form.AddToCartForm;
+import com.sjsu.masterproject.form.CustomerForm;
 import com.sjsu.masterproject.form.SignInForm;
 import com.sjsu.masterproject.form.SignUpForm;
 import com.sjsu.masterproject.model.Cart;
@@ -668,6 +669,73 @@ public class OnlineStoreWebAppController {
 			// Error page
 			return "error";
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GetMapping(value = "/account")
+	public String showCustomerProfile(Model model) throws Exception {
+		log.info("account...");
+
+		if (!Util.isCustomerLoggedIn(request)) {
+			// Customer not logged in. Redirect to login page
+			String redirectUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ "/login.html?frwd=account";
+			log.info("redirectUrl: {}", redirectUrl);
+			return "redirect:" + redirectUrl;
+		}
+		
+		Util.setSignInStatus(model, request);
+
+		Customer customer = customerServiceClient.getCustomer(Util.getCustomerFromRequest(request));
+		CustomerForm customerForm = new CustomerForm();
+		customerForm.setCustomerId(customer.getId());
+		customerForm.setFirstName(customer.getFirstName());
+		customerForm.setLastName(customer.getLastName());
+		
+		// If customer preference is empty - assume customer has selected all
+		if (customer.getPreferences()!= null && customer.getPreferences().size() > 0) {
+			customerForm.setPreferences(customer.getPreferences());
+		} else {
+			customerForm.setPreferences(env.getProperty(Util.CUSTOMER_PREFERENCES_CONFIG, List.class));
+		}
+		
+		model.addAttribute("customerForm", customerForm);
+		model.addAttribute("preferences", env.getProperty(Util.CUSTOMER_PREFERENCES_CONFIG, List.class));
+
+		return "account";
+	}
+	
+	@PostMapping(value = "/account/save")
+	public String updateCustomer(@Valid CustomerForm customerForm, BindingResult bindingResult, Model model)
+			throws Exception {
+		
+		log.info("updateCustomer: customerForm: {}", customerForm);
+
+		if (!customerForm.isValid()) {
+			customerForm.setMessage("Invalid user input. Cannot save!");
+			model.addAttribute("customerForm", customerForm);
+			model.addAttribute("preferences", env.getProperty(Util.CUSTOMER_PREFERENCES_CONFIG, List.class));
+			
+			// Go back to account page with error message
+			return "account";
+		}
+		
+		Customer customer = new Customer();
+		customer.setId(customerForm.getCustomerId());
+		customer.setFirstName(customerForm.getFirstName());
+		customer.setLastName(customerForm.getLastName());
+		customer.setPassword(customerForm.getPassword());
+		customer.setPreferences(customerForm.getPreferences());
+		
+		customerServiceClient.updateCustomer(customer);
+		
+		// Redirecting to home
+		String redirectUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+		+ "/home.html";
+		
+		log.info("redirectUrl: {}", redirectUrl);
+		return "redirect:" + redirectUrl;
+
 	}
 
 	// @GetMapping(value = "/error")

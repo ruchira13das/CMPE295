@@ -103,38 +103,39 @@
 	</header>
 	<!--/header-->
 	
-	<section id="form"><!--form-->
+	<section id="slider"><!--form-->
 		<div class="container">
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-sm-4 col-sm-offset-4">
 					<div class="signup-form"><!--sign up form-->
 						<h2>Manage your Account!</h2>
-						<form action="/customer/save" th:action="@{/customer/save}" th:object="${customerForm}" method="post">
-							<input type="text" placeholder="First Name" th:field="*{firstName}" th:text="${customerForm.firstName}"/>
-							<input type="text" placeholder="Last Name" th:field="*{lastName}" th:text="${customerForm.lastName}"/>
-							<input type="text" placeholder="Id" th:field="*{customerId}" th:text="${customerForm.customerId}"/>
-							<input type="password" placeholder="Password" th:field="*{password}" th:text="${customerForm.password}"/>
+						<form action="/account/save" th:action="@{/account/save}" th:object="${customerForm}" method="post">
+							<input type="text" placeholder="First Name" th:field="*{firstName}" th:value="${customerForm.firstName}"/>
+							<input type="text" placeholder="Last Name" th:field="*{lastName}" th:value="${customerForm.lastName}"/>
+							<input type="text" placeholder="Id" th:field="*{customerId}" th:value="${customerForm.customerId}" readOnly="readonly"/>
+							<input type="password" placeholder="Password" th:field="*{password}" />
 							
 							<span class="login-error" th:text="${customerForm.message}"/>
 							
 							<ul class="checkbox-grid">
 								<th:block th:each="preference:${preferences}">
 								<li>
-								<input type="checkbox" class="checkbox" th:field="*{preferences}" th:value="|${customerForm.preference}|" th:text="${preference}"/> 
+								<input type="checkbox" class="checkbox" th:field="*{preferences}" th:value="|${preference}|" th:text="${preference}"/> 
 								</li>
 								</th:block>
 								<li>
-								<button type="submit" class="btn btn-default">Save</button>
+								<button type="submit" class="btn btn-default">Update</button>
 								</li>
 							</ul>
-							
-							<input type="hidden" th:field="*{forwardAction}" th:value="${forwardAction}"/>
 						</form>
 					</div><!--/sign up form-->
 				</div>
 			</div>
 		</div>
 	</section><!--/form-->
+	
+	<section id="form"> &nbsp;
+	</section>
 	
 	<footer id="footer">
 		<!--Footer-->

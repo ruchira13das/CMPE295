@@ -2,8 +2,10 @@ package com.sjsu.masterproject.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -111,9 +113,12 @@ public class RecommendationsServiceImpl implements RecommendationsService {
 		}
 
 		// Filter based on user preferences
+		log.info("customer: {}", customer);
 		if (preferences != null && preferences.size() > 0) {
-			for (String productId : recommendedProductsMap.keySet()) {
+			Set<String> productIds = new HashSet<>(recommendedProductsMap.keySet());
+			for (String productId : productIds) {
 				// User preference does not include this product category.
+				log.info("recommended prod: {}", recommendedProductsMap.get(productId).getCategory());
 				if (!preferences.contains(recommendedProductsMap.get(productId).getCategory())) {
 					recommendedProductsMap.remove(productId);
 					log.info("Removed product Id from the recommendations list: {}", productId);
