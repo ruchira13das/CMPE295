@@ -1,0 +1,187 @@
+Mongo Import to the PRODUCTS collection
+---------------------------------------
+mongoimport --db masterproject --collection product --drop --file meta_Baby_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection product --file meta_Beauty_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection product --file meta_Musical_Instruments_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection product --file meta_Toys_and_Games_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection product --file meta_Books_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection product --file meta_Cell_Phones_and_Accessories_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+
+
+Mongo Import to the CUSTOMER collection
+---------------------------------------
+mongoimport --db masterproject --collection customer --drop --file reviews_Musical_Instruments_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+mongoimport --db masterproject --collection customer --file reviews_Baby_ready.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+
+Mongo Export RECOMMENDATIONS from local Mongo repo
+---------------------------------------------------
+mongoexport --db masterproject --collection recommendations --out recommendations_initial.json --verbose
+
+
+Mongo Import to the EC2 RECOMMENDATIONS collection
+--------------------------------------------------
+mongoimport --db masterproject --collection recommendations --drop --file recommendations_initial.json --batchSize 1000 --numInsertionWorkers 5 --verbose
+
+
+Create Indexes
+--------------
+db.recommendations.createIndex( { "userId" : 1 })
+db.recommendations.createIndex( { "category" : 1 })
+db.recommendations.createIndex( { "userId" : 1, "category" : 1 }
+
+
+db.customer.createIndex( { "idAsLongString" : 1 })
+
+db.product.createIndex( { "featured" : 1 })
+db.product.createIndex( { "category" : 1 })
+db.product.createIndex( { "featured" : 1, "category": 1 })
+db.product.createIndex( { "featured" : 1, "brand": 1 })
+
+
+Update PRODUCTS collection for featured products
+------------------------------------------------
+Baby:
+-----
+B00000J55X
+B000056J4G
+B000056OV0
+B00009KN1D
+B0001NE4TY
+
+db.product.find({_id: { $in: ["B00000J55X", "B000056J4G", "B000056OV0", "B00009KN1D", "B0001NE4TY"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["B00000J55X","B000056J4G", "B000056OV0", "B00009KN1D", "B0001NE4TY"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+Beauty:
+-------
+9790794231
+B000052ZEO
+B00005CDSG
+B000065DJW
+B0000AJ3PR
+
+db.product.find({_id: { $in: ["9790794231", "B000052ZEO", "B00005CDSG", "B000065DJW", "B0000AJ3PR"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["9790794231", "B000052ZEO", "B00005CDSG", "B000065DJW", "B0000AJ3PR"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+Books:
+------
+0002166453
+0002318075
+0004129377
+0006145388
+0006812996
+
+db.product.find({_id: { $in: ["0002166453", "0002318075", "0004129377", "0006145388", "0006812996"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["0002166453", "0002318075", "0004129377", "0006145388", "0006812996"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+
+Cell Phones/Accessories:
+------------------------
+9861013903
+9868507464
+998575526X
+B0000AKAHN
+B00034ZZHQ
+
+db.product.find({_id: { $in: ["9861013903", "9868507464", "998575526X", "B0000AKAHN", "B00034ZZHQ"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["9861013903", "9868507464", "998575526X", "B0000AKAHN", "B00034ZZHQ"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+
+Muscial Instruments:
+--------------------
+0634029363
+B0000014CJ
+B000004189
+B00000JWM5
+B00004KH72
+
+db.product.find({_id: { $in: ["0634029363", "B0000014CJ", "B000004189", "B00000JWM5", "B00004KH72"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["0634029363", "B0000014CJ", "B000004189", "B00000JWM5", "B00004KH72"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+Toys:
+-----
+0764942174
+0982390343
+1582679517
+1589945131
+1616617020
+
+db.product.find({_id: { $in: ["0764942174", "0982390343", "1582679517", "1589945131", "1616617020"]}}).pretty()
+
+db.product.update(
+   { _id: { $in: ["0764942174", "0982390343", "1582679517", "1589945131", "1616617020"] }},
+   { $set:
+      {
+        featured: "true"
+      }
+   },
+   {multi: true}
+)
+
+
+db.product.find({"featured" : "true"})
+
+
+Update Featured products with $0 price
+--------------------------------------
+db.product.update(
+   { _id: { $in: ["B00009KN1D", "9790794231", "B000052ZEO", "B000065DJW", "B00005CDSG", "B0000AJ3PR", "B00000JWM5", "0982390343", "9868507464", "998575526X"] }},
+   { $set:
+      {
+        price: 20.75
+      }
+   },
+   {multi: true}
+)
