@@ -21,10 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.sjsu.masterproject.transform.entity.Recommendations;
 import com.sjsu.masterproject.transform.repository.RecommendationsRepository;
 
-/**
- * @author sambits
- *
- */
 public abstract class MerchandizeRecommendations {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
